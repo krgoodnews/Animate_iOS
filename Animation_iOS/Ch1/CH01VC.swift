@@ -49,12 +49,20 @@ class CH01VC: UIViewController {
 	let messages = ["Connecting ...", "Authorizing ...", "Sending credentials ...", "Failed"]
 	
 	var statusPosition = CGPoint.zero
-	
+
+	var animationContainerView: UIView!
+
 	// MARK: view controller methods
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+
+		// setup the animation container
+		animationContainerView = UIView(frame: view.bounds)
+		animationContainerView.frame = view.bounds
+		animationContainerView.isUserInteractionEnabled = false
+		view.addSubview(animationContainerView)
+
 		//set up the UI
 		loginButton.layer.cornerRadius = 8.0
 		loginButton.layer.masksToBounds = true
@@ -82,24 +90,77 @@ class CH01VC: UIViewController {
 		heading.center.x -= width
 		username.center.x -= width
 		password.center.x -= width
+		loginButton.center.y += 30.0
+		loginButton.alpha = 0
+
+		for cloud in [cloud1, cloud2, cloud3, cloud4] {
+			cloud?.alpha = 0
+		}
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		
+
 		UIView.animate(withDuration: 0.5) {
 			self.heading.center.x += self.view.bounds.width
 		}
 		
-		UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: {
+		UIView.animate(withDuration: 0.5, delay: 0.3, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
 			self.username.center.x += self.view.bounds.width
 		}, completion: nil)
+
+		UIView.animate(withDuration: 0.5, delay: 0.4, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+			self.password.center.x += self.view.bounds.width
+		}, completion: nil)
+
+		UIView.animate(withDuration: 0.5, delay: 0.5, options: [], animations: {
+			self.cloud1.alpha = 1
+		}, completion: nil)
+
+		UIView.animate(withDuration: 0.5, delay: 0.7, options: [], animations: {
+			self.cloud2.alpha = 1
+		}, completion: nil)
+
+		UIView.animate(withDuration: 0.5, delay: 0.9, options: [], animations: {
+			self.cloud3.alpha = 1
+		}, completion: nil)
+
+		UIView.animate(withDuration: 0.5, delay: 1.1, options: [], animations: {
+			self.cloud4.alpha = 1
+		}, completion: nil)
+
+		UIView.animate(withDuration: 0.5, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+			self.loginButton.center.y -= 30
+			self.loginButton.alpha = 1
+		}, completion: nil)
+
+
 	}
 	
 	// MARK: further methods
 	
 	@IBAction func login() {
 		view.endEditing(true)
+
+//		UIView.animate(withDuration: 1.5, delay: 0.0, usingSpringWithDamping:
+//			0.2, initialSpringVelocity: 0.0, options: [], animations: {
+//				self.loginButton.bounds.size.width += 80.0
+//				self.loginButton.backgroundColor = UIColor(red: 0.85, green: 0.83, blue: 0.45, alpha: 1.0)
+//		}, completion: nil)
+
+		// create new View
+		let newView = UIImageView(image: UIImage(named: "banner"))
+		newView.center = animationContainerView.center
+
+//		// add the view via transition
+//		UIView.transition(with: animationContainerView, duration: 0.33, options: [.curveEaseOut, .transitionFlipFromBottom], animations: {
+//			self.loginButton.removeFromSuperview()
+//		}, completion: nil)
+
+		// add the view via transition
+		UIView.transition(with: animationContainerView, duration: 0.33, options: [.curveEaseOut, .transitionFlipFromBottom], animations: {
+			self.animationContainerView.addSubview(newView)
+		}, completion: nil)
 	}
 	
 	// MARK: UITextFieldDelegate
